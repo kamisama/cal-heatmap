@@ -75,6 +75,111 @@ declare namespace CalHeatmap {
     key?: string;
   }
   export type PluginDefinition = [IPluginContructor, Partial<PluginOptions>?];
+
+  // Plugin Options
+
+  export interface LegendOptions extends PluginOptions {
+    enabled: boolean;
+    itemSelector: string | null;
+    label: string | null;
+    width: number;
+  }
+
+  export interface LegendLiteOptions extends PluginOptions {
+    enabled: boolean;
+    itemSelector: string | null;
+    width: number;
+    height: number;
+    radius: number;
+    gutter: number;
+    includeBlank: boolean;
+  }
+
+  export interface PopperOptions {
+    placement: any;
+    modifiers: any[];
+    strategy: any;
+    onFirstUpdate?: any;
+  }
+
+  export interface TooltipOptions extends PluginOptions, PopperOptions {
+    enabled: boolean;
+    text: (
+      timestamp: CalHeatmap.Timestamp,
+      value: number,
+      dayjsDate: dayjs.Dayjs,
+    ) => string;
+  }
+
+  export type ComputedOptions = {
+    radius: number;
+    width: number;
+    height: number;
+    gutter: number;
+    textAlign: TextAlign;
+  };
+
+  export type Padding = [number, number, number, number];
+  export type TextAlign = 'start' | 'middle' | 'end';
+
+  export interface CalendarLabelOptions extends PluginOptions, Partial<ComputedOptions> {
+    enabled: boolean;
+    text: () => string[];
+    padding: Padding;
+  }
+
+  // Built-in plugins
+
+  export class Legend implements IPlugin {
+    constructor(calendar: CalHeatmap);
+    name: string;
+    calendar: CalHeatmap;
+    options: LegendOptions;
+    root: any;
+    shown: boolean;
+    setup(options?: Partial<LegendOptions>): void;
+    paint(): Promise<unknown>;
+    destroy(): Promise<unknown>;
+  }
+
+  export class LegendLite implements IPlugin {
+    constructor(calendar: CalHeatmap);
+    name: string;
+    calendar: CalHeatmap;
+    options: LegendLiteOptions;
+    root: any;
+    shown: boolean;
+    setup(options?: Partial<LegendLiteOptions>): void;
+    paint(): Promise<unknown>;
+    destroy(): Promise<unknown>;
+  }
+
+  export class Tooltip implements IPlugin {
+    constructor(calendar: CalHeatmap);
+    name: string;
+    calendar: CalHeatmap;
+    options: Partial<TooltipOptions>;
+    root: HTMLElement | null;
+    popperInstance: any;
+    popperOptions: any;
+    listenerAttached: boolean;
+    setup(options?: Partial<TooltipOptions>): void;
+    paint(): Promise<unknown>;
+    destroy(): Promise<unknown>;
+  }
+
+  export class CalendarLabel implements IPlugin {
+    constructor(calendar: CalHeatmap);
+    name: string;
+    calendar: CalHeatmap;
+    options: CalendarLabelOptions;
+    root: any;
+    shown: boolean;
+    computedOptions: ComputedOptions;
+    setup(options?: Partial<CalendarLabelOptions>): void;
+    paint(): Promise<unknown>;
+    destroy(): Promise<unknown>;
+  }
 }
 
 declare class CalHeatmap {
